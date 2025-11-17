@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Upload</title>
+</head>
+<body>
+    <h1>Batch Upload</h1>
+    <form id="batchForm">
+        <label for="file">Upload CSV File:</label>
+        <input type="file" id="file" name="file" accept=".csv" required>
+        <br><br>
+        <button type="submit">Upload</button>
+    </form>
+     <a id="downloadLink" style="display:none;">Download Predictions</a>
+</body>
+    <script>
+        const batchForm = document.getElementById('batchForm');
+        const downloadLink = document.getElementById('downloadLink');
+
+        batchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(batchForm);
+
+            const response = await fetch("/predict_batch", {
+                method: "POST",
+                body: formData
+            });
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            downloadLink.href = url;
+            downloadLink.download = "predictions.csv";
+            downloadLink.style.display = "block";
+            downloadLink.innerText = "Download Predictions CSV";
+        });
+    </script>
+
+</html>
